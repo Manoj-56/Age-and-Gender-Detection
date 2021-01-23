@@ -5,9 +5,9 @@ import cv2
 
 app = Flask(__name__,template_folder='template')
 
-face_cascade = cv2.CascadeClassifier(r'C:/Users/manoj/Desktop/DL/DL/haarcascade_frontalface_default.xml')
-model = load_model(r'C:/Users/manoj/Desktop/project/template/Detecting_Age.h5')
-model2 = load_model(r'C:/Users/manoj/Desktop/project/template/gender_Model.h5')
+face_cascade = cv2.CascadeClassifier(r'haarcascade_frontalface_default.xml')
+model = load_model(r'Detecting_Age.h5')
+model2 = load_model(r'gender_Model.h5')
 cap = cv2.VideoCapture(0)
 
 @app.route('/')

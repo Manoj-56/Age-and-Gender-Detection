@@ -20,7 +20,7 @@ from tensorflow.keras.layers import Dense, Flatten,Conv2D,MaxPool2D,Dropout,Batc
 man = os.listdir('/content/drive/MyDrive/Gender/Boys')
 woman = os.listdir('/content/drive/MyDrive/Gender/Girls')
 
-# Reading and storing Cats and Dogs images
+# Reading and storing Boys and Girls images
 
 man_data = []
 woman_data = []
@@ -148,6 +148,8 @@ plt.tight_layout()
 plt.legend(['Accuracy','Val_Accuracy'])
 plt.show()
 
+
+# Predictions and Plotting The Predictions
 def prediction(x):
   read = cv2.imread(x)
   color = cv2.cvtColor(read,cv2.COLOR_BGR2RGB)

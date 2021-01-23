@@ -18,7 +18,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten,Conv2D,MaxPool2D,Dropout
 
-# Taking Cats and Dogs images from Drive
+# Taking different age groups images from Drive
 one_3 = os.listdir('/content/drive/MyDrive/datasets/face_age/1-3')
 four_8 = os.listdir('/content/drive/My Drive/datasets/face_age/4-8')
 ten_15 = os.listdir('/content/drive/My Drive/datasets/face_age/10-15')
@@ -31,6 +31,7 @@ sixty_70 = os.listdir('/content/drive/My Drive/datasets/face_age/60-70')
 
 len(one_3),len(four_8),len(ten_15),len(sixteen_20),len(twenty_30),len(thirty_40),len(fourty_50),len(fifty_60),len(sixty_70)
 
+# Storing all Images in list
 data_13 = []
 for i in one_3:
   try:
@@ -209,77 +210,6 @@ model.compile(optimizer='adam',
               loss = 'sparse_categorical_crossentropy',  
               metrics = ['accuracy'])
 
-model_checkpoint=tf.keras.callbacks.ModelCheckpoint('Detecting_Age_Model.h5',save_best_only=True)
-
-epoch = model.fit(train_fea,train_lab,epochs=20,batch_size = 256,validation_data=(valid_fea,valid_lab),verbose=1)
+epoch = model.fit(train_fea,train_lab,epochs=50,batch_size = 256,validation_data=(valid_fea,valid_lab),verbose=1)
 
 model.save('Detecting_Age.h5')
-
-model_checkpoint
-
-def prediction(x):
-#   read = cv2.imread(x)
-  color = cv2.cvtColor(x,cv2.COLOR_BGR2RGB)
-  size = cv2.resize((cv2.cvtColor(color,cv2.COLOR_RGB2GRAY)),(256,256))
-  image = np.array(size)
-  res_img = image.reshape(1,256,256,1)
-  pre = model.predict(res_img)
-  return pre
-
-import cv2
-import numpy as np
-from tensorflow.keras.models import load_model
-# Load the cascade
-face_cascade = cv2.CascadeClassifier('/content/drive/MyDrive/DL/haarcascade_frontalface_default.xml')
-model = load_model(r'Detecting_Age.h5')
-
-# To capture video from webcam. 
-cap = cv2.VideoCapture(0)
-# To use a video file as input 
-# cap = cv2.VideoCapture('filename.mp4')
-
-while True:
-    # Read the frame
-    _, img = cap.read()
-
-    # Convert to grayscale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    # Detect the faces
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-
-    # Draw the rectangle around each face
-    for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
-        roi_clr = img[y:y+h,x:x+w]
-        predict = prediction(roi_clr)
-        if np.argmax(predict) == 0:
-            cv2.putText(img,'1-3',(x,y),cv2.FONT_HERSHEY_SIMPLEX,1.6,(0,255,0),2)
-        elif np.argmax(predict)==1:
-            cv2.putText(img,'4-8',(x,y),cv2.FONT_HERSHEY_SIMPLEX,1.6,(0,255,0),2)
-        elif np.argmax(predict)==2:
-            cv2.putText(img,'10-15',(x,y),cv2.FONT_HERSHEY_SIMPLEX,1.6,(0,255,0),2)
-        elif np.argmax(predict)==3:
-            cv2.putText(img,'16-20',(x,y),cv2.FONT_HERSHEY_SIMPLEX,1.6,(0,255,0),2)
-        elif np.argmax(predict)==4:
-            cv2.putText(img,'20-30',(x,y),cv2.FONT_HERSHEY_SIMPLEX,1.6,(0,255,0),2)
-        elif np.argmax(predict)==5:
-            cv2.putText(img,'31-40',(x,y),cv2.FONT_HERSHEY_SIMPLEX,1.6,(0,255,0),2)
-        elif np.argmax(predict)==6:
-            cv2.putText(img,'40-50',(x,y),cv2.FONT_HERSHEY_SIMPLEX,1.6,(0,255,0),2)
-        elif np.argmax(predict)==7:
-            cv2.putText(img,'50-60',(x,y),cv2.FONT_HERSHEY_SIMPLEX,1.6,(0,255,0),2)
-        elif np.argmax(predict)==8:
-            cv2.putText(img,'60-70',(x,y),cv2.FONT_HERSHEY_SIMPLEX,1.6,(0,255,0),2)
-
-    # Display
-    cv2.imshow('img', img)
-
-    # Stop if escape key is pressed
-    k = cv2.waitKey(30) & 0xff
-    if k==27:
-        break
-        
-# Release the VideoCapture object
-cap.release()
-
